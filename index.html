@@ -857,6 +857,10 @@
   function attachDrag(p){
     var el = p.el;
     var drag = null;
+    // Moving the piece node between tray and board releases pointer capture
+    // (DOM remove+insert); guard the lostpointercapture handler across the
+    // lift and re-acquire capture so the drag survives.
+    var liftGuard = false;
 
     el.addEventListener("pointerdown", function(e){
       if(p.state === "locked" || solved) return;
@@ -870,7 +874,7 @@
         id: e.pointerId,
         grabFX: 0, grabFY: 0,
         startX: e.clientX, startY: e.clientY,
-        moved: false, lifted: false,
+        moved: false, lifted: p.state !== "tray",
         fromTray: p.state === "tray",
         prevState: p.state, prevLx: p.lx, prevLy: p.ly
       };
@@ -897,7 +901,10 @@
         p.lx = (e.clientX - brect0.left) / brect0.width - 0.5 / cols;
         p.ly = (e.clientY - brect0.top) / brect0.height - 0.5 / rows;
         p.state = "loose";
+        liftGuard = true;
         looseLayer.appendChild(el);
+        liftGuard = false;
+        try{ el.setPointerCapture(drag.id); }catch(err){}
         renderPiece(p);
         positionPiece(p);
         var nr = el.getBoundingClientRect();
@@ -951,7 +958,7 @@
     el.addEventListener("pointercancel", function(e){ finish(e, true); });
     window.addEventListener("pointerup", function(e){ finish(e, false); });
     window.addEventListener("pointercancel", function(e){ finish(e, true); });
-    el.addEventListener("lostpointercapture", function(){ if(drag) finish({ clientX: orphanX, clientY: orphanY, pointerType: "mouse" }, true); });
+    el.addEventListener("lostpointercapture", function(){ if(liftGuard) return; if(drag) finish({ clientX: orphanX, clientY: orphanY, pointerType: "mouse" }, true); });
   }
 
   /* ---------------- controls ---------------- */
