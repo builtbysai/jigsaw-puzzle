@@ -136,6 +136,10 @@
   }
   #winBar.on{display:inline-flex}
   #winBar .btn{padding:7px 13px}
+  /* narrow phones: let the win pill wrap instead of clipping the button */
+  @media (max-width:420px){
+    #winBar{white-space:normal;flex-wrap:wrap;justify-content:center;text-align:center;row-gap:8px}
+  }
 
   /* ---------- pieces ---------- */
   .piece{position:absolute;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
@@ -828,7 +832,11 @@
     stopTimer();
     deselect();
     winText.textContent = "Solved in " + fmt(elapsed) + " · " + moves + " moves";
-    winBar.classList.add("on");
+    // The win bar (and its Play-again button) must not pop up under the
+    // winning tap: the tap's click phase would land on the button and
+    // instantly reset the game via newGame(). Show it after the tap is done.
+    // Guard on `solved` in case undo/new-game ran in the meantime.
+    setTimeout(function(){ if(solved) winBar.classList.add("on"); }, 400);
   }
 
   /* ---------------- selection (tap to place) ---------------- */
