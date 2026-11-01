@@ -2,7 +2,8 @@
    cutting each piece out of the picture as a ready-to-draw sprite.
 
    Every interior edge is generated once and shared by the two pieces that
-   meet there, so neighbours always fit exactly. */
+   meet there, so neighbours always fit exactly. Edges come from a seeded
+   random generator, so a saved game can rebuild identical pieces. */
 (function (G) {
   "use strict";
 
@@ -19,23 +20,22 @@
     return { cols: best.cols, rows: best.rows };
   }
 
-  /* One tab/blank, in unit space along an edge from (0,0) to (1,0).
-     P are anchor points, C the two bezier controls for each segment.
-     dir = +1 bulges toward the canonical normal, -1 the other way. */
+  /* One tab/blank, in unit space along an edge from (0,0) to (1,0). */
   function makeEdge(rand) {
-    var c = 0.5 + (rand() - 0.5) * 0.12;
-    var t = 0.2 + rand() * 0.07;
-    var bw = 0.125 + rand() * 0.03;
-    var nw = 0.052 + rand() * 0.02;
+    var c = 0.5 + (rand() - 0.5) * 0.14;
+    var t = 0.2 + rand() * 0.075;
+    var bw = 0.122 + rand() * 0.034;
+    var nw = 0.05 + rand() * 0.022;
+    var wob = (rand() - 0.5) * 0.02;
     var left = c - nw, right = c + nw;
-    var P = [[0, 0], [left, 0], [c - bw, t * 0.75], [c, t], [c + bw, t * 0.75], [right, 0], [1, 0]];
+    var P = [[0, 0], [left, wob], [c - bw, t * 0.75], [c, t], [c + bw, t * 0.75], [right, wob], [1, 0]];
     var C = [
-      [[left / 3, 0], [left * 2 / 3, 0]],
+      [[left / 3, 0], [left * 2 / 3, wob]],
       [[c - nw * 0.9, t * 0.35], [c - bw - 0.02, t * 0.4]],
       [[c - bw, t * 0.95], [c - bw * 0.55, t]],
       [[c + bw * 0.55, t], [c + bw, t * 0.95]],
       [[c + bw + 0.02, t * 0.4], [c + nw * 0.9, t * 0.35]],
-      [[right + (1 - right) / 3, 0], [right + (1 - right) * 2 / 3, 0]]
+      [[right + (1 - right) / 3, wob], [right + (1 - right) * 2 / 3, 0]]
     ];
     return { P: P, C: C, dir: rand() < 0.5 ? 1 : -1 };
   }
@@ -102,26 +102,25 @@
     var bx = p.c * cw, by = p.r * ch;
     c.drawImage(source, (bx - m) * sx, (by - m) * sy, (cw + 2 * m) * sx, (ch + 2 * m) * sy,
                 -m, -m, cw + 2 * m, ch + 2 * m);
-    // soft bevel: light edge down-right, dark edge on the outline
-    c.translate(0.9, 0.9);
-    c.strokeStyle = "rgba(255,255,255,0.28)";
+    // cardboard sheen: light from the top left
+    var g = c.createLinearGradient(0, 0, cw, ch);
+    g.addColorStop(0, "rgba(255,255,255,0.10)");
+    g.addColorStop(0.5, "rgba(255,255,255,0)");
+    g.addColorStop(1, "rgba(0,0,20,0.12)");
+    c.fillStyle = g;
+    c.fillRect(-m, -m, cw + 2 * m, ch + 2 * m);
+    // bevel: bright cut edge down-right, dark outline
+    c.translate(0.8, 0.8);
+    c.strokeStyle = "rgba(255,255,255,0.30)";
     c.lineWidth = 3;
     c.stroke(p.path);
-    c.translate(-0.9, -0.9);
-    c.strokeStyle = "rgba(0,0,0,0.42)";
-    c.lineWidth = 1.6;
+    c.translate(-0.8, -0.8);
+    c.strokeStyle = "rgba(10,5,20,0.50)";
+    c.lineWidth = 1.7;
     c.stroke(p.path);
     c.restore();
     return sprite;
   }
 
-  function shuffle(a, rand) {
-    for (var i = a.length - 1; i > 0; i--) {
-      var j = Math.floor(rand() * (i + 1));
-      var t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
-  }
-
-  G.Engine = { gridFor: gridFor, makeEdges: makeEdges, piecePath: piecePath, makeSprite: makeSprite, shuffle: shuffle };
+  G.Engine = { gridFor: gridFor, makeEdges: makeEdges, piecePath: piecePath, makeSprite: makeSprite };
 })(window.JP = window.JP || {});

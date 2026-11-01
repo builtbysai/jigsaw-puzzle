@@ -1,25 +1,22 @@
-# Jigsaw Puzzle
+# Jigsaw
 
-A focused jigsaw puzzle game that runs entirely in the browser. No build step, no dependencies.
+A cozy jigsaw puzzle game that runs in the browser. No build step, no dependencies.
 
-Live: https://builtbysai.com/jigsaw-puzzle/
+**Play:** https://builtbysai.com/jigsaw-puzzle/
 
-## Play
+## What's in it
+- **13 original scenes** drawn by code (mountains, aurora, koi pond, nebula, balloons and more), so every puzzle is crisp, offline and different each time.
+- **12 to 192 pieces**, with real interlocking Bezier edges shared between neighbours.
+- **Pieces that feel good**: lift and tilt while dragging, soft shadows, a glow where a piece will snap, sparks, floating score, and a satisfying click.
+- **Groups**: matching pieces join anywhere on the table and move together. Combo scoring rewards quick chains.
+- **Daily puzzle** (same for everyone) with a streak, a **collection** of stars per picture and size, and stats.
+- **Helpers**: hint, tidy loose pieces, dim middle pieces (Edges), hold-to-peek, undo.
+- **Your photo** or a random online photo as a puzzle.
+- Oak, felt or slate table, synthesized sound, haptics, autosave and resume.
+- Touch friendly: pinch to zoom, drag to pan, double tap to zoom.
 
-- Pick a picture (217 photos, a generated default, or **Your photo**) and a piece count: 12, 24, 48, 96 or 192.
-- Drag pieces onto the board. A piece dropped near its spot snaps in and locks.
-- Drag empty felt to move around, scroll or pinch to zoom. The buttons on the table fit the whole table or just the board.
-- **Guide** shows a faint copy of the picture on the board, **Hold to peek** shows it in full, **Hint** highlights a piece and where it goes, **Undo** (or Ctrl/Cmd+Z) takes back a move.
-- Best times are saved per piece count in your browser.
+## Shortcuts
+`Z` undo · `H` hint · `T` tidy · `E` edges · `Space` peek · `F` fit · `+`/`-` zoom · `M` mute · `Esc` library
 
-## Code
-
-| File | What it does |
-| --- | --- |
-| `index.html`, `style.css` | Page, toolbar, picture shelf, light/dark theme |
-| `js/engine.js` | Grid choice, interlocking piece outlines, cutting pieces from the picture |
-| `js/scene.js` | Generated artwork used as the default picture and as the offline fallback |
-| `js/pictures.js` | Picture library (picsum.photos seeds) |
-| `js/app.js` | Game state, camera, input, canvas rendering, UI |
-
-Photos load from picsum.photos. If a download fails, the game falls back to generated artwork so it always works.
+## Structure
+`js/util.js` helpers · `js/art.js`, `js/art2.js` scenes · `js/engine.js` piece geometry · `js/table.js` textures · `js/audio.js` sound · `js/game.js` game core · `js/ui.js` interface.

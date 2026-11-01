@@ -2,83 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#33523f">
-<meta name="description" content="A focused jigsaw puzzle game. Pick a picture, choose 12 to 192 pieces, and piece it together.">
-<link rel="icon" href="data:,">
-<title>Jigsaw Puzzle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1a120c">
+<title>Jigsaw – a cozy puzzle table</title>
+<meta name="description" content="A cozy jigsaw puzzle game with 13 hand-built scenes, 12 to 192 pieces, a daily puzzle and streaks. Play free in your browser.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
 
-  <header class="head">
-    <h1>Jigsaw Puzzle</h1>
-    <span id="picName">Mountain Lake</span>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M4 12h10a6 6 0 0 1 0 12" transform="translate(0 -4)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-hint" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-tidy" viewBox="0 0 24 24"><path d="M4 5h6v6H4zM14 5h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-edges" viewBox="0 0 24 24"><path d="M4 4h16v16H4z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 9h6v6H9z" fill="currentColor" opacity=".35"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="currentColor"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2 6.3 20.3l1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z" fill="currentColor"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="15" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><circle cx="9" cy="15" r="1.5" fill="currentColor"/></symbol>
+</svg>
+
+<main id="stage">
+  <canvas id="table" aria-label="Jigsaw puzzle table"></canvas>
+
+  <header class="hud" id="hud" hidden>
+    <button class="chip icon-btn" id="btn-lib" aria-label="Open puzzle library"><svg><use href="#i-grid"/></svg></button>
+    <div class="title"><b id="h-name">Puzzle</b><span id="h-sub"></span></div>
+    <div class="stats">
+      <div class="pill progress" title="Pieces placed">
+        <svg class="ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" class="bg"/><circle cx="18" cy="18" r="15" class="fg" id="ring"/></svg>
+        <span id="h-prog">0/0</span>
+      </div>
+      <div class="pill" id="h-time">0:00</div>
+      <div class="pill score" id="h-score">0</div>
+    </div>
+    <button class="chip icon-btn" id="btn-sound" aria-label="Toggle sound"><svg><use href="#i-sound"/></svg></button>
   </header>
 
-  <div class="bar">
-    <div class="group">
-      <button class="btn primary" id="newBtn" type="button">New game</button>
-      <button class="btn" id="undoBtn" type="button" disabled>Undo</button>
-      <button class="btn" id="ghostBtn" type="button" aria-pressed="true">Guide</button>
-      <button class="btn" id="peekBtn" type="button">Hold to peek</button>
-      <button class="btn" id="hintBtn" type="button">Hint</button>
-    </div>
-    <div class="group">
-      <span class="seg-label" id="sizeLabel">Pieces</span>
-      <div class="seg" role="group" aria-labelledby="sizeLabel" id="sizeSeg">
-        <button type="button" data-n="12">12</button>
-        <button type="button" data-n="24">24</button>
-        <button type="button" data-n="48">48</button>
-        <button type="button" data-n="96">96</button>
-        <button type="button" data-n="192">192</button>
+  <div class="combo" id="combo" hidden><span id="combo-n">x2</span><i id="combo-bar"></i></div>
+  <div class="intro" id="intro" hidden><b>Drag pieces onto the board</b><span>Matching pieces click together. Scroll or pinch to zoom, drag the table to pan.</span></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <nav class="dock" id="dock" hidden>
+    <button id="d-undo" aria-label="Undo (Z)"><svg><use href="#i-undo"/></svg><span>Undo</span></button>
+    <button id="d-hint" aria-label="Hint (H)"><svg><use href="#i-hint"/></svg><span>Hint</span></button>
+    <button id="d-tidy" aria-label="Tidy loose pieces (T)"><svg><use href="#i-tidy"/></svg><span>Tidy</span></button>
+    <button id="d-edges" aria-label="Dim middle pieces (E)" aria-pressed="false"><svg><use href="#i-edges"/></svg><span>Edges</span></button>
+    <button id="d-peek" aria-label="Hold to peek at the picture (Space)"><svg><use href="#i-eye"/></svg><span>Peek</span></button>
+    <span class="sep"></span>
+    <button id="d-fit" aria-label="Fit table (F)"><svg><use href="#i-fit"/></svg><span>Fit</span></button>
+    <button id="d-zin" class="zoom" aria-label="Zoom in"><svg><use href="#i-plus"/></svg></button>
+    <button id="d-zout" class="zoom" aria-label="Zoom out"><svg><use href="#i-minus"/></svg></button>
+  </nav>
+</main>
+
+<!-- Library -->
+<section class="modal" id="lib" aria-modal="true" role="dialog" aria-labelledby="lib-title">
+  <div class="sheet">
+    <header class="lib-head">
+      <div><h1 id="lib-title">Jigsaw</h1><p>Pick a picture, pick a size, and get puzzling.</p></div>
+      <div class="streak" id="streak" hidden><svg><use href="#i-flame"/></svg><b id="streak-n">0</b><span>day streak</span></div>
+      <button class="chip icon-btn" id="lib-close" aria-label="Close" hidden><svg><use href="#i-close"/></svg></button>
+    </header>
+
+    <div class="lib-body">
+      <div class="hero-row">
+        <button class="hero daily" id="card-daily"><canvas width="360" height="240"></canvas><div class="meta"><em>Daily puzzle</em><b id="daily-name">Today</b><span id="daily-sub">48 pieces</span></div><i class="badge" id="daily-badge"></i></button>
+        <button class="hero cont" id="card-cont" hidden><canvas width="360" height="240"></canvas><div class="meta"><em>Continue</em><b id="cont-name"></b><span id="cont-sub"></span></div><div class="bar"><i id="cont-bar"></i></div></button>
       </div>
-    </div>
-    <div class="stats">
-      <span class="stat">Placed <b id="statPlaced">0 / 0</b></span>
-      <span class="stat">Time <b id="statTime">0:00</b></span>
-      <span class="stat">Moves <b id="statMoves">0</b></span>
+
+      <h2>Pieces</h2>
+      <div class="sizes" id="sizes" role="radiogroup" aria-label="Number of pieces"></div>
+
+      <h2>Pictures</h2>
+      <div class="grid" id="grid"></div>
+
+      <h2>More</h2>
+      <div class="more">
+        <label class="more-card"><svg><use href="#i-photo"/></svg><b>Your photo</b><span>Turn any picture into a puzzle</span><input type="file" id="file" accept="image/*" hidden></label>
+        <button class="more-card" id="btn-random"><svg><use href="#i-dice"/></svg><b>Random photo</b><span>A real photo from the internet</span></button>
+      </div>
+
+      <h2>Settings</h2>
+      <div class="settings">
+        <div class="row"><span>Table</span><div class="seg" id="seg-table"></div></div>
+        <div class="row"><span>Picture guide on board</span><button class="switch" id="sw-guide" role="switch" aria-checked="true"><i></i></button></div>
+        <div class="row"><span>Sound</span><button class="switch" id="sw-sound" role="switch" aria-checked="true"><i></i></button></div>
+        <div class="row"><span>Vibration</span><button class="switch" id="sw-haptics" role="switch" aria-checked="true"><i></i></button></div>
+      </div>
+
+      <h2>Your stats</h2>
+      <div class="statgrid" id="statgrid"></div>
+      <p class="fine">Scenes are drawn by code, so every puzzle is crisp and works offline. Progress is saved automatically on this device.</p>
     </div>
   </div>
+</section>
 
-  <div class="layout">
-    <main class="stage" id="stage">
-      <canvas id="table" aria-label="Puzzle table. Drag pieces onto the board; drag empty felt to move the view; scroll or pinch to zoom."></canvas>
-
-      <div class="zoom" role="group" aria-label="View controls">
-        <button type="button" id="zoomIn" aria-label="Zoom in" title="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-        <button type="button" id="zoomOut" aria-label="Zoom out" title="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
-        <button type="button" id="fitAll" aria-label="Show whole table" title="Show whole table"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-        <button type="button" id="fitBoard" aria-label="Zoom to board" title="Zoom to board"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 12h16M12 4v16"/></svg></button>
-      </div>
-
-      <div class="busy" id="busy" role="status"></div>
-      <div class="winbar" id="winBar" role="status">
-        <span id="winText">Solved</span>
-        <button class="btn primary" id="againBtn" type="button">Play again</button>
-      </div>
-      <p class="help">Drag pieces onto the board. Drag empty felt to move around; scroll or pinch to zoom.</p>
-    </main>
-
-    <aside class="shelf" aria-label="Pictures">
-      <div class="shelf-head">
-        <h2>Pictures</h2>
-        <input id="picSearch" type="search" placeholder="Search pictures" aria-label="Search pictures" autocomplete="off">
-      </div>
-      <div class="grid" id="picker" role="group" aria-label="Choose a picture"></div>
-    </aside>
+<!-- Win -->
+<section class="modal win" id="win" aria-modal="true" role="dialog" aria-labelledby="win-title">
+  <div class="sheet small">
+    <div class="stars" id="win-stars"></div>
+    <h1 id="win-title">Puzzle complete!</h1>
+    <p id="win-sub"></p>
+    <div class="winstats" id="win-stats"></div>
+    <div class="actions">
+      <button class="btn primary" id="win-again">Another one</button>
+      <button class="btn" id="win-lib">Library</button>
+      <button class="btn ghost" id="win-view">View picture</button>
+    </div>
   </div>
+</section>
 
-</div>
-
-<input type="file" id="fileInput" accept="image/*" hidden>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<script src="js/pictures.js"></script>
-<script src="js/scene.js"></script>
+<script src="js/util.js"></script>
+<script src="js/art.js"></script>
+<script src="js/art2.js"></script>
 <script src="js/engine.js"></script>
-<script src="js/app.js"></script>
+<script src="js/table.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
 </body>
 </html>
